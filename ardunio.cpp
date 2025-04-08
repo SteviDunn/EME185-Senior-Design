@@ -9,6 +9,7 @@ const int wheel_radius = 0;         //wheel radius in ()
 volatile int pulse_current = 0;   //current number of pulse counted
 volatile int pulse_last = 0;      //number of pulse counted at the last time interrupt
 float last_velocity = 0;          //velocity of the wheel at the last time interrupt
+float acceleration = 0;           //acceleration of the wheel at the last time interrupt
 
 //Interrupt Service Routines
 //function for external interrupt: counting the pulses everytime the sensor state changes
@@ -28,7 +29,9 @@ ISR(TIMER1_COMPA_vect) {
   float RPM = RPS*60; //RPM = revolutions per minute
   float omega = 2 * PI * RPS; //Angular velocity in rad/s
   float linear_velocity = omega * wheel_radius; //Linear velocity in m/s
-
+  acceleration = linear_velocity - last_velocity;
+  last_velocity = linear_velocity;
+  
   //Print results
   Serial.print("RPM: ");
   Serial.print(RPM);
